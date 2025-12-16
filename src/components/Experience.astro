@@ -1,0 +1,44 @@
+---
+import ExperienceItem from "./ExperienceItem.astro"
+const EXPERIENCE = [
+  {
+    date: "Actualmente...",
+    title: "Desarrollador .NET Fullstack",
+    company: "SEPROBAN",
+    description:
+      "Realizo actividades de desarrollo FullStack utilizando tecnologías de .NET (Blazor, Net Core) para compartir información de manera segura entre distintas instituciones, además de haber participado en la implementación de la ISO 27001.",
+    
+  },
+  {
+    date: "Febrero 2022 - Octubre 2024",
+    title: "Líder de TI",
+    company: "Seguros Azteca",
+    description:
+      "Líder responsable del equipo de atención a incidencias de desarrollos de Seguros Azteca. Implementación de optimizaciones y correcciones a venta y ",
+  },
+  {
+    date: "Marzo 2020 - Marzo 2022",
+    title: "Desarrollador .NET",
+    company: "Global Hitss",
+    description:
+      "Responsable del desarrollo de la plátaforma de autenticación de clientes mediante llamadas teléfonicas. Implementación de mejoras en manejo de seguridad ante robo de identidad.",
+  },
+  {
+    date: "Enero 2019 - Octubre 2019",
+    title: "Desarrollador",
+    company: "PAISA",
+    description:
+      "Desarrollador del sistema de órdenes de servicio, optimizando el proceso manual e implementandolo en todas sus sucursales.",
+  },
+]
+---
+
+<ol class="relative mt-16">
+  {
+    EXPERIENCE.map((experience) => (
+      <li class="">
+        <ExperienceItem {...experience} />
+      </li>
+    ))
+  }
+</ol>

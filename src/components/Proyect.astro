@@ -1,0 +1,23 @@
+---
+const { Title, Description, Image, Link } = Astro.props;
+
+---
+<a href={Link}>
+    <div class="flex flex-col group cursor-pointer overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+        <div class="w-full bg-center bg-no-repeat aspect-4/3 bg-cover rounded-t-xl overflow-hidden">
+            <img class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" 
+            src={Image ?? '../src/assets/images/example.jpg'}
+            
+            >
+        </div>
+        
+        <div class="p-6 flex flex-col grow">
+            <h3 class="text-lg font-bold leading-normal text-gray-900 mb-2">{Title}</h3>
+            <p class="text-sm font-normal leading-normal text-gray-400 mb-4 grow">{Description}</p>
+            <div class="flex flex-wrap gap-2">
+            <span class="text-xs font-medium py-1 px-3 rounded-full bg-blue-700/20 text-primary/80">UI Design</span>
+            <span class="text-xs font-medium py-1 px-3 rounded-full bg-blue-700/20 text-primary/80">Data Viz</span>
+            </div>
+        </div>
+    </div>
+</a>
