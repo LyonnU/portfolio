@@ -1,0 +1,169 @@
+---
+import SunIcon from "../assets/icons/Sun.astro"
+import MoonIcon from "../assets/icons/Moon.astro"
+import SystemIcon from "../assets/icons/System.astro"
+
+const THEMES = ["Light", "Dark", "System"]
+---
+
+<div class="relative ml-1 mr-1">
+  <button
+    transition:persist
+    id="theme-toggle-btn"
+    class="appearance-none border-none flex items-center justify-center hover:scale-125 transition relative w-8 h-8"
+  >
+    <span class="sr-only">Elige el tema</span>
+    <SunIcon id="light" class="theme-toggle-icon size-5 transition-all absolute" style="scale: 0; opacity: 0;" />
+    <MoonIcon
+      id="dark"
+      class="theme-toggle-icon absolute size-5 transition-all"
+      style="scale: 0; opacity: 0;"
+    />
+    <SystemIcon
+      id="system"
+      class="theme-toggle-icon absolute size-5 transition-all"
+      style="scale: 1; opacity: 1;"
+    />
+  </button>
+  <div
+    transition:persist
+    id="themes-menu"
+    class="absolute hidden scale-100 top-8 left-0 text-sm p-1 min-w-32 rounded-md border border-gray-100 bg-white/90 dark:bg-gray-900/90 dark:border-gray-500/20 shadow-[0_3px_10px_rgb(0,0,0,0.2)] backdrop-blur-md"
+  >
+    <ul>
+      {
+        THEMES.map((theme) => (
+          <li class="themes-menu-option px-2 py-1.5 cursor-default hover:bg-neutral-400/40 dark:hover:bg-gray-500/50 rounded-sm">
+            {theme}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</div>
+
+<style>
+  #themes-menu.open {
+    display: block !important;
+    animation: scale-up-center 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  }
+
+  @keyframes scale-up-center {
+    from {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+</style>
+
+<script is:inline>
+  (function() {
+    let remove = null
+    const matchMedia = window.matchMedia("(prefers-color-scheme: dark)")
+
+    const getThemePreference = () => {
+      if (typeof localStorage !== "undefined") {
+        const saved = localStorage.getItem("theme")
+        if (saved) return saved
+      }
+      return "system"
+    }
+
+    const updateIcon = (themePreference) => {
+      const icons = document.querySelectorAll(".theme-toggle-icon")
+      icons.forEach((element) => {
+        element.style.scale = element.id === themePreference ? "1" : "0"
+        element.style.opacity = element.id === themePreference ? "1" : "0"
+      })
+    }
+
+    const updateTheme = () => {
+      // Remover listener anterior si existe
+      if (remove != null) {
+        remove()
+      }
+
+      const themePreference = getThemePreference()
+      const isDark =
+        themePreference === "dark" ||
+        (themePreference === "system" && matchMedia.matches)
+
+      // Aplicar clase dark al html
+      if (isDark) {
+        document.documentElement.classList.add("dark")
+      } else {
+        document.documentElement.classList.remove("dark")
+      }
+
+      // Actualizar iconos
+      updateIcon(themePreference)
+
+      // Agregar listener para cambios del sistema (solo si es "system")
+      if (themePreference === "system") {
+        matchMedia.addEventListener("change", updateTheme)
+        remove = () => {
+          matchMedia.removeEventListener("change", updateTheme)
+        }
+      } else {
+        remove = null
+      }
+    }
+
+    // Función de inicialización
+    function initThemeToggle() {
+      const themesMenu = document.getElementById("themes-menu")
+      const themeToggleBtn = document.getElementById("theme-toggle-btn")
+      const themeOptions = document.querySelectorAll(".themes-menu-option")
+
+      if (!themesMenu || !themeToggleBtn) return
+
+      // Inicializar tema
+      updateTheme()
+
+      // Cerrar menú al hacer click fuera
+      document.addEventListener("click", (e) => {
+        if (!themesMenu.contains(e.target) && !themeToggleBtn.contains(e.target)) {
+          themesMenu.classList.remove("open")
+        }
+      })
+
+      // Toggle del menú
+      themeToggleBtn.addEventListener("click", (e) => {
+        e.stopPropagation()
+        const isClosed = !themesMenu.classList.contains("open")
+        themesMenu.classList[isClosed ? "add" : "remove"]("open")
+      })
+
+      // Opciones del menú
+      themeOptions.forEach((element) => {
+        element.addEventListener("click", (e) => {
+          e.stopPropagation()
+          const theme = e.target.innerText.toLowerCase().trim()
+          localStorage.setItem("theme", theme)
+          updateTheme()
+          themesMenu.classList.remove("open")
+        })
+      })
+    }
+
+    // Ejecutar cuando el DOM esté listo
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initThemeToggle)
+    } else {
+      initThemeToggle()
+    }
+
+    // Manejar navegación de Astro
+    document.addEventListener('astro:page-load', () => {
+      initThemeToggle()
+    })
+
+    // También aplicar tema inmediatamente si el script se carga después del DOM
+    updateTheme()
+  })()
+</script>
